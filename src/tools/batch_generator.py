@@ -1,8 +1,7 @@
 import time
 from datetime import datetime, timedelta
 from typing import List, Dict
-
-from src.utils.gen_gis_data import GeospatialDataGenerator
+from src.tools.generator import GeospatialDataGenerator
 from src.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -99,13 +98,3 @@ def batch_process_regions(
             total_duration = datetime.now() - start_time
             logger.info("\nAll regions have been processed!")
             logger.info(f"Total processing time: {total_duration}")
-
-
-if __name__ == "__main__":
-    BATCH_SIZE = 20
-    WAIT_MINUTES = 30
-    DATA_TYPES = ["pois", "routes", "polygons"]
-
-    batch_process_regions(
-        batch_size=BATCH_SIZE, wait_minutes=WAIT_MINUTES, data_types=DATA_TYPES
-    )

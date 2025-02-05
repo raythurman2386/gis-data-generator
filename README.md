@@ -44,14 +44,71 @@ python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-3. Install required packages:
+3. Install the package in development mode:
 ```bash
-pip install -r requirements.txt
+pip install -e .
+```
+
+## Project Structure
+
+```
+gis-data-generator/
+├── src/                    # Source code
+│   ├── config/            # Configuration files
+│   │   └── logging_config.py
+│   ├── data/              # Data storage
+│   │   ├── cache/        # Cached data
+│   │   ├── plots/        # Generated plots
+│   │   ├── pois/         # Points of Interest data
+│   │   ├── polygons/     # Polygon data
+│   │   ├── routes/       # Route data
+│   │   └── street_network/ # Street network data
+│   ├── tools/             # Core functionality
+│   │   ├── generator.py   # Main data generator
+│   │   └── batch_generator.py # Batch processing
+│   ├── utils/             # Utility functions
+│   │   ├── logger.py     # Logging setup
+│   │   └── utils.py      # Common utilities
+│   └── main.py           # CLI entry point
+├── logs/                  # Log files
+├── setup.py              # Package setup
+└── requirements.txt      # Dependencies
 ```
 
 ## Usage
 
-### Basic Usage
+The GIS Data Generator can be used either as a CLI tool or as a Python package.
+
+### CLI Usage
+
+After installation, you can use the tool in two ways:
+
+1. Using the installed command:
+```bash
+gis-generator generate --region oklahoma_city
+gis-generator batch --batch-size 20 --wait-minutes 30 --data-types pois --data-types routes
+```
+
+2. Using Python directly:
+```bash
+python src/main.py generate --region oklahoma_city
+python src/main.py batch --batch-size 20 --wait-minutes 30 --data-types pois --data-types routes
+```
+
+Available commands:
+
+1. `generate`: Generate data for a single region
+   - Options:
+     - `--region`: Region to generate data for (default: oklahoma_city)
+
+2. `batch`: Run batch processing for multiple regions
+   - Options:
+     - `--batch-size`: Number of regions to process in each batch (default: 20)
+     - `--wait-minutes`: Wait time between batches in minutes (default: 30)
+     - `--data-types`: Types of data to generate (can be specified multiple times)
+       - Available types: pois, routes, polygons
+
+### Python Package Usage
 
 ```python
 from gis_data_generator import GeospatialDataGenerator
