@@ -42,7 +42,6 @@ class GeospatialDataGenerator:
         "minneapolis": {"city": "Minneapolis", "state": "Minnesota", "country": "USA"},
         "milwaukee": {"city": "Milwaukee", "state": "Wisconsin", "country": "USA"},
         "indianapolis": {"city": "Indianapolis", "state": "Indiana", "country": "USA"},
-        "columbus": {"city": "Columbus", "state": "Ohio", "country": "USA"},
         "kansas_city": {"city": "Kansas City", "state": "Missouri", "country": "USA"},
         "omaha": {"city": "Omaha", "state": "Nebraska", "country": "USA"},
         "des_moines": {"city": "Des Moines", "state": "Iowa", "country": "USA"},
@@ -127,6 +126,9 @@ class GeospatialDataGenerator:
         "buffalo": {"city": "Buffalo", "state": "New York", "country": "USA"},
         "richmond": {"city": "Richmond", "state": "Virginia", "country": "USA"},
         "grand_rapids": {"city": "Grand Rapids", "state": "Michigan", "country": "USA"},
+        "corydon": {"city": "Corydon", "state": "Indiana", "country": "USA"},
+        "antlers": {"city": "Antlers", "state": "Oklahoma", "country": "USA"},
+        "hugo": {"city": "Hugo", "state": "Oklahoma", "country": "USA"},
         # Additional Major Metropolitan Areas
         "san_jose": {"city": "San Jose", "state": "California", "country": "USA"},
         "fort_worth": {"city": "Fort Worth", "state": "Texas", "country": "USA"},
@@ -262,8 +264,20 @@ class GeospatialDataGenerator:
                 truncate_by_edge=True,
             )
 
-            # Add routing attributes
-            self.graph = ox.add_edge_speeds(self.graph)
+            # Define default speeds for different highway types (in km/h)
+            hwy_speeds = {
+                'motorway': 100,
+                'trunk': 85,
+                'primary': 65,
+                'secondary': 55,
+                'tertiary': 45,
+                'residential': 35,
+                'service': 25,
+                'unclassified': 40
+            }
+
+            # Add routing attributes with fallback speeds
+            self.graph = ox.add_edge_speeds(self.graph, hwy_speeds=hwy_speeds, fallback=40)
             self.graph = ox.add_edge_travel_times(self.graph)
             state = (
                 self._region_queries[self.region]["state"].lower().replace(" ", "_")
