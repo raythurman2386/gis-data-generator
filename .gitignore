@@ -48,3 +48,5 @@ src/logs
 src/test_data
 Data/
 *.png
+
+.ruff_cache

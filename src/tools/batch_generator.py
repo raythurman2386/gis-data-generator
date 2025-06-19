@@ -45,9 +45,7 @@ def process_region(region: str, data_types: List[str] = None) -> None:
         logger.error(f"Error processing region {region}: {str(e)}")
 
 
-def batch_process_regions(
-    batch_size: int = 10, wait_minutes: int = 30, data_types: List[str] = None
-) -> None:
+def batch_process_regions(batch_size: int = 10, wait_minutes: int = 30, data_types: List[str] = None) -> None:
     """Process regions in batches with rate limiting"""
     # Get all available regions
     all_regions = list(GeospatialDataGenerator._region_queries.keys())
@@ -86,9 +84,7 @@ def batch_process_regions(
         regions_left = total_regions - (i + len(batch))
 
         if regions_left > 0:
-            next_time = (datetime.now() + timedelta(minutes=wait_minutes)).strftime(
-                "%H:%M:%S"
-            )
+            next_time = (datetime.now() + timedelta(minutes=wait_minutes)).strftime("%H:%M:%S")
             logger.info(f"\nBatch {batch_num} completed in {batch_duration}")
             logger.info(f"{regions_left} regions remaining")
             logger.info(f"Waiting {wait_minutes} minutes before next batch...")

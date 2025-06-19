@@ -37,9 +37,7 @@ def validate_and_correct_data(df, target_column):
             df[col] = pd.to_numeric(df[col], errors="coerce")  # Convert numeric strings
             logger.debug(f"🔢 Converted {col} to numeric")
         except:
-            logger.warning(
-                f"⚠️ Non-numeric column '{col}' detected. Consider encoding it."
-            )
+            logger.warning(f"⚠️ Non-numeric column '{col}' detected. Consider encoding it.")
 
     # 4️⃣ **Ensure no missing values after conversion**
     df = df.fillna(0)  # Replace any remaining NaN values with 0
@@ -52,9 +50,7 @@ def validate_and_correct_data(df, target_column):
 
     # 6️⃣ **Ensure target column exists**
     if target_column not in df.columns:
-        raise ValueError(
-            f"❌ Target column '{target_column}' is missing from the dataset!"
-        )
+        raise ValueError(f"❌ Target column '{target_column}' is missing from the dataset!")
 
     logger.info("✅ Data validation & correction complete!")
     return df
@@ -66,13 +62,9 @@ def create_dask_dataframe(n_samples=10000):
 
     users = np.random.randint(1000, 1100, size=n_samples)  # User IDs (1000-1099)
     friends = np.random.randint(1000, 1100, size=n_samples)  # Friend connections
-    interaction_strength = (
-        np.random.rand(n_samples) * 10
-    )  # Random weights for interaction strength
+    interaction_strength = np.random.rand(n_samples) * 10  # Random weights for interaction strength
 
-    df = pd.DataFrame(
-        {"User": users, "Friend": friends, "Strength": interaction_strength}
-    )
+    df = pd.DataFrame({"User": users, "Friend": friends, "Strength": interaction_strength})
     return df
 
 
@@ -80,9 +72,7 @@ def compute_class_weights(y):
     """Compute balanced class weights"""
     class_counts = y.value_counts()
     total = len(y)
-    weights = {
-        i: total / (len(class_counts) * count) for i, count in enumerate(class_counts)
-    }
+    weights = {i: total / (len(class_counts) * count) for i, count in enumerate(class_counts)}
     return weights
 
 
@@ -99,7 +89,7 @@ def make_unique_name(name, used_names):
     # If name is already used, add a number
     counter = 1
     while True:
-        numbered_name = f"{base_name[:8-len(str(counter))]}{counter}"
+        numbered_name = f"{base_name[: 8 - len(str(counter))]}{counter}"
         if numbered_name not in used_names:
             used_names.add(numbered_name)
             return numbered_name

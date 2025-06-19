@@ -138,18 +138,15 @@ class GeospatialDataGenerator:
         "seattle_tacoma": {"city": "Tacoma", "state": "Washington", "country": "USA"},
         "denver_boulder": {"city": "Boulder", "state": "Colorado", "country": "USA"},
         "nashville_davidson": {"city": "Davidson", "state": "Tennessee", "country": "USA"},
-
         # Tech Hubs
         "austin_round_rock": {"city": "Round Rock", "state": "Texas", "country": "USA"},
         "raleigh_durham": {"city": "Durham", "state": "North Carolina", "country": "USA"},
         "portland_vancouver": {"city": "Vancouver", "state": "Washington", "country": "USA"},
-
         # College Towns
         "ann_arbor": {"city": "Ann Arbor", "state": "Michigan", "country": "USA"},
         "berkeley": {"city": "Berkeley", "state": "California", "country": "USA"},
         "cambridge": {"city": "Cambridge", "state": "Massachusetts", "country": "USA"},
         "chapel_hill": {"city": "Chapel Hill", "state": "North Carolina", "country": "USA"},
-
         # State Capitals not already included
         "montgomery": {"city": "Montgomery", "state": "Alabama", "country": "USA"},
         "juneau": {"city": "Juneau", "state": "Alaska", "country": "USA"},
@@ -173,16 +170,56 @@ class GeospatialDataGenerator:
         "madison": {"city": "Madison", "state": "Wisconsin", "country": "USA"},
     }
     _states = [
-        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
-        "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-        "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
-        "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-        "New Hampshire", "New Jersey", "New Mexico", "New York",
-        "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
-        "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-        "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
-        "West Virginia", "Wisconsin", "Wyoming"
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
     ]
 
     def __init__(self, data_type="points", region="seattle", num_points=1000):
@@ -235,15 +272,11 @@ class GeospatialDataGenerator:
         """Load boundary data and street network from OpenStreetMap"""
         try:
             if self.region not in self._region_queries:
-                logger.warning(
-                    f"Region {self.region} not found, using fallback boundary"
-                )
+                logger.warning(f"Region {self.region} not found, using fallback boundary")
                 self._load_fallback_boundary()
                 return False
 
-            logger.info(
-                f"Loading boundary data for {self.region} from OpenStreetMap..."
-            )
+            logger.info(f"Loading boundary data for {self.region} from OpenStreetMap...")
 
             # Load boundary
             gdf = self._load_boundary_gdf()
@@ -266,22 +299,20 @@ class GeospatialDataGenerator:
 
             # Define default speeds for different highway types (in km/h)
             hwy_speeds = {
-                'motorway': 100,
-                'trunk': 85,
-                'primary': 65,
-                'secondary': 55,
-                'tertiary': 45,
-                'residential': 35,
-                'service': 25,
-                'unclassified': 40
+                "motorway": 100,
+                "trunk": 85,
+                "primary": 65,
+                "secondary": 55,
+                "tertiary": 45,
+                "residential": 35,
+                "service": 25,
+                "unclassified": 40,
             }
 
             # Add routing attributes with fallback speeds
             self.graph = ox.add_edge_speeds(self.graph, hwy_speeds=hwy_speeds, fallback=40)
             self.graph = ox.add_edge_travel_times(self.graph)
-            state = (
-                self._region_queries[self.region]["state"].lower().replace(" ", "_")
-            )
+            state = self._region_queries[self.region]["state"].lower().replace(" ", "_")
 
             # Create base directory structure
             data_type_dir = os.path.join(self.DATA_DIR, "street_network")
@@ -290,9 +321,7 @@ class GeospatialDataGenerator:
             states_dir = os.path.join(data_type_dir, state)
             os.makedirs(states_dir, exist_ok=True)
 
-            filename = (
-                    f"street_network_{self.region}_{datetime.now().strftime('%Y%m%d')}"
-                )
+            filename = f"street_network_{self.region}_{datetime.now().strftime('%Y%m%d')}"
             filepath = os.path.join(states_dir, f"{filename}.gpkg")
             ox.io.save_graph_geopackage(self.graph, filepath=filepath)
             logger.info(f"Street network saved to {filepath}")
@@ -300,9 +329,7 @@ class GeospatialDataGenerator:
             # Cache boundary
             self._cache_boundary()
 
-            logger.info(
-                f"Successfully loaded boundary and street network for {self.region}"
-            )
+            logger.info(f"Successfully loaded boundary and street network for {self.region}")
             return True
 
         except Exception as e:
@@ -365,16 +392,12 @@ class GeospatialDataGenerator:
                 (-122.4359, 47.5003),
             ]
         )
-        self.boundary = gpd.GeoDataFrame(
-            {"geometry": [default_boundary]}, crs="EPSG:4326"
-        )
+        self.boundary = gpd.GeoDataFrame({"geometry": [default_boundary]}, crs="EPSG:4326")
 
     def generate_pois(self):
         """Generate points using real Points of Interest (POIs) from OpenStreetMap"""
         try:
-            logger.info(
-                f"Fetching points of interest for {self.region} from OpenStreetMap..."
-            )
+            logger.info(f"Fetching points of interest for {self.region} from OpenStreetMap...")
 
             # Define tags for different types of POIs
             tags = {
@@ -441,8 +464,7 @@ class GeospatialDataGenerator:
                                 "point_id": len(points) - 1,
                                 "type": poi_type[:10],
                                 "name": str(name)[:20],
-                                "timestamp": datetime.now()
-                                + timedelta(minutes=len(points)),
+                                "timestamp": datetime.now() + timedelta(minutes=len(points)),
                             }
                         )
 
@@ -465,9 +487,7 @@ class GeospatialDataGenerator:
             # Create GeoDataFrame
             points_gdf = gpd.GeoDataFrame(point_data, geometry=points, crs="EPSG:4326")
 
-            logger.info(
-                f"Successfully generated {len(points_gdf)} points from OSM data"
-            )
+            logger.info(f"Successfully generated {len(points_gdf)} points from OSM data")
             return points_gdf
 
         except Exception as e:
@@ -496,12 +516,9 @@ class GeospatialDataGenerator:
                     while origin_node == dest_node:
                         dest_node = np.random.choice(nodes)
 
-                    route_nodes = nx.shortest_path(
-                        self.graph, origin_node, dest_node, weight="length"
-                    )
+                    route_nodes = nx.shortest_path(self.graph, origin_node, dest_node, weight="length")
                     route_coords = [
-                        (nodes_gdf.loc[node].geometry.x, nodes_gdf.loc[node].geometry.y)
-                        for node in route_nodes
+                        (nodes_gdf.loc[node].geometry.x, nodes_gdf.loc[node].geometry.y) for node in route_nodes
                     ]
 
                     route = LineString(route_coords)
@@ -515,19 +532,15 @@ class GeospatialDataGenerator:
                         {
                             "route_id": i,
                             "distance": route_length,
-                            "duration": route_length
-                            / 1609.34
-                            / np.random.uniform(20, 40)
-                            * 60,
+                            "duration": route_length / 1609.34 / np.random.uniform(20, 40) * 60,
                             "vehicle_type": np.random.choice(["car", "truck", "bike"]),
-                            "start_time": datetime.now()
-                            + timedelta(minutes=np.random.randint(0, 1440)),
+                            "start_time": datetime.now() + timedelta(minutes=np.random.randint(0, 1440)),
                             "num_stops": len(route_nodes) - 1,
                         }
                     )
 
                     if (i + 1) % 10 == 0:
-                        logger.info(f"Generated {i+1} routes...")
+                        logger.info(f"Generated {i + 1} routes...")
 
                 except Exception as e:
                     logger.warning(f"Error generating route {i}: {str(e)}")
@@ -548,9 +561,7 @@ class GeospatialDataGenerator:
         """Generate polygon data using real OpenStreetMap features like administrative boundaries,
         land use areas, and neighborhoods within the region."""
         try:
-            logger.info(
-                f"Fetching real polygon data for {self.region} from OpenStreetMap..."
-            )
+            logger.info(f"Fetching real polygon data for {self.region} from OpenStreetMap...")
 
             # Tags to fetch from OSM - we'll get administrative boundaries, land use, and leisure areas
             tags = {
@@ -599,9 +610,7 @@ class GeospatialDataGenerator:
             # Calculate area in square Kilometers using projected CRS
             gdf_utm = gdf.to_crs(utm_crs)
             # Convert from square meters to square kilometers and round to 2 decimal places
-            gdf["area"] = (gdf_utm.geometry.area / 1000000).round(
-                2
-            )  # Area in square kilometers
+            gdf["area"] = (gdf_utm.geometry.area / 1000000).round(2)  # Area in square kilometers
 
             # Add useful attributes with guaranteed unique names
             gdf["zone_id"] = range(len(gdf))
@@ -626,9 +635,7 @@ class GeospatialDataGenerator:
 
             # Add population density (estimated based on area)
             # Larger areas tend to have lower density
-            gdf["density"] = (5000 * (1 / np.sqrt(gdf["area"]))).round(
-                0
-            )  # people per sq km
+            gdf["density"] = (5000 * (1 / np.sqrt(gdf["area"]))).round(0)  # people per sq km
             gdf["density"] = gdf["density"].clip(100, 10000)  # reasonable range
 
             # Calculate estimated population based on area and density
@@ -649,9 +656,7 @@ class GeospatialDataGenerator:
             if len(gdf.columns) != len(set(gdf.columns)):
                 raise ValueError("Duplicate column names detected")
 
-            logger.info(
-                f"Successfully generated {len(gdf)} real polygons from OSM data"
-            )
+            logger.info(f"Successfully generated {len(gdf)} real polygons from OSM data")
             return gdf
 
         except Exception as e:
@@ -690,9 +695,7 @@ class GeospatialDataGenerator:
                 raise ValueError("No data to plot. Run generate_data first.")
 
             # Create base directory structure
-            state = (
-                self._region_queries[self.region]["state"].lower().replace(" ", "_")
-            )
+            state = self._region_queries[self.region]["state"].lower().replace(" ", "_")
 
             plots_dir = os.path.join(self.DATA_DIR, "plots")
             os.makedirs(plots_dir, exist_ok=True)
@@ -718,9 +721,7 @@ class GeospatialDataGenerator:
                 for vtype in ["car", "truck", "bike"]:
                     mask = plot_data["vehicle_type"] == vtype
                     if mask.any():
-                        plot_data[mask].plot(
-                            ax=ax, alpha=0.6, label=vtype, linewidth=2, zorder=3
-                        )
+                        plot_data[mask].plot(ax=ax, alpha=0.6, label=vtype, linewidth=2, zorder=3)
                 plt.legend()
             elif self.data_type == "polygons":
                 plot_data.plot(
@@ -747,16 +748,10 @@ class GeospatialDataGenerator:
             plt.ylabel("Latitude")
 
             # Save plot
-            plt.savefig(
-                os.path.join(
-                    states_dir, f"geospatial_{self.region}_{self.data_type}_plot.png"
-                )
-            )
+            plt.savefig(os.path.join(states_dir, f"geospatial_{self.region}_{self.data_type}_plot.png"))
             plt.close()
 
-            logger.info(
-                f"Plot saved as '{states_dir}/geospatial_{self.region}_{self.data_type}_plot.png'"
-            )
+            logger.info(f"Plot saved as '{states_dir}/geospatial_{self.region}_{self.data_type}_plot.png'")
             return True
 
         except Exception as e:
@@ -773,9 +768,7 @@ class GeospatialDataGenerator:
             fig, ax = plt.subplots(figsize=(15, 10))
 
             # Plot the boundary
-            self.boundary.plot(
-                ax=ax, alpha=0.5, edgecolor="black", facecolor="lightgray"
-            )
+            self.boundary.plot(ax=ax, alpha=0.5, edgecolor="black", facecolor="lightgray")
 
             # If we have street network data, plot it
             if hasattr(self, "street_network") and self.street_network is not None:
@@ -810,16 +803,14 @@ class GeospatialDataGenerator:
             ax.text(
                 scale_x,
                 scale_y * 0.99,
-                f"{scale_length*111:.1f} km",
+                f"{scale_length * 111:.1f} km",
                 ha="center",
                 va="top",
             )
 
             # Save the plot
             # Create base directory structure
-            state = (
-                self._region_queries[self.region]["state"].lower().replace(" ", "_")
-            )
+            state = self._region_queries[self.region]["state"].lower().replace(" ", "_")
 
             plots_dir = os.path.join(self.DATA_DIR, "plots")
             os.makedirs(plots_dir, exist_ok=True)
@@ -844,9 +835,7 @@ class GeospatialDataGenerator:
             if self.data.crs is None:
                 self.data = self._ensure_crs(self.data)
 
-            state = (
-                self._region_queries[self.region]["state"].lower().replace(" ", "_")
-            )
+            state = self._region_queries[self.region]["state"].lower().replace(" ", "_")
 
             # Create base directory structure
             data_type_dir = os.path.join(self.DATA_DIR, self.data_type)
@@ -855,9 +844,7 @@ class GeospatialDataGenerator:
             states_dir = os.path.join(data_type_dir, state)
             os.makedirs(states_dir, exist_ok=True)
 
-            filename = (
-                f"{self.data_type}_{self.region}_{datetime.now().strftime('%Y%m%d')}"
-            )
+            filename = f"{self.data_type}_{self.region}_{datetime.now().strftime('%Y%m%d')}"
 
             if format == "geojson":
                 filepath = os.path.join(states_dir, f"{filename}.geojson")
@@ -950,14 +937,10 @@ class GeospatialDataGenerator:
             if total_cache_size > max_cache_size:
                 cls._boundary_cache.clear()
                 cls._graph_cache.clear()
-                logger.info(
-                    f"Cache cleared - exceeded max size of {max_cache_size} items"
-                )
+                logger.info(f"Cache cleared - exceeded max size of {max_cache_size} items")
                 return True
 
-            logger.debug(
-                f"Cache size ({total_cache_size}) within limits ({max_cache_size})"
-            )
+            logger.debug(f"Cache size ({total_cache_size}) within limits ({max_cache_size})")
             return False
 
         except Exception as e:

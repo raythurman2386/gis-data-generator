@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.config.logging_config import CURRENT_LOGGING_CONFIG
 
@@ -19,9 +19,7 @@ class CustomFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
 
-    format_str = (
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    )
+    format_str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
 
     FORMATS = {
         logging.DEBUG: grey + format_str + reset,
@@ -42,7 +40,7 @@ class JSONFormatter(logging.Formatter):
 
     def format(self, record):
         log_record = {
-            "timestamp": datetime.utcfromtimestamp(record.created).isoformat(),
+            "timestamp": datetime.fromtimestamp(record.created, timezone.utc).isoformat(),
             "level": record.levelname,
             "name": record.name,
             "message": record.getMessage(),
