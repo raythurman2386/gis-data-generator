@@ -28,7 +28,7 @@ setup(
         "seamless_3dep",
         "rasterio",
         "geopandas[all]",
-        "git+https://github.com/raythurman2386/pysheds.git@main",
+        "pysheds @ git+https://github.com/raythurman2386/pysheds.git@master",
     ],
     extras_require={
         "dev": [

@@ -29,6 +29,8 @@ This project demonstrates advanced usage of geospatial libraries and data proces
 - Shapely
 - Pandas
 - NumPy
+- PySheds
+- Rasterio
 
 ## Installation
 
@@ -65,7 +67,8 @@ gis-data-generator/
 │   │   └── street_network/ # Street network data
 │   ├── tools/             # Core functionality
 │   │   ├── generator.py   # Main data generator
-│   │   └── batch_generator.py # Batch processing
+│   │   ├── batch_generator.py # Batch processing
+│   │   └── hydrologic_analysis.py # Hydrologic analysis tools
 │   ├── utils/             # Utility functions
 │   │   ├── logger.py     # Logging setup
 │   │   └── utils.py      # Common utilities
@@ -77,36 +80,42 @@ gis-data-generator/
 
 ## Usage
 
-The GIS Data Generator can be used either as a CLI tool or as a Python package.
-
 ### CLI Usage
 
 After installation, you can use the tool in two ways:
 
-1. Using the installed command:
-```bash
-gis-generator generate --region oklahoma_city
-gis-generator batch --batch-size 20 --wait-minutes 30 --data-types pois --data-types routes
-```
+1.  Using the installed command:
+    ```bash
+    gis-generator generate --region oklahoma_city
+    gis-generator batch --batch-size 20 --wait-minutes 30 --data-types pois --data-types routes
+    gis-generator hydrologic-analysis --bbox -97.7 35.4 -97.3 35.8 --project-dir ./hydro_project
+    ```
 
-2. Using Python directly:
-```bash
-python src/main.py generate --region oklahoma_city
-python src/main.py batch --batch-size 20 --wait-minutes 30 --data-types pois --data-types routes
-```
+2.  Using Python directly:
+    ```bash
+    python src/main.py generate --region oklahoma_city
+    python src/main.py batch --batch-size 20 --wait-minutes 30 --data-types pois --data-types routes
+    python src/main.py hydrologic-analysis --bbox -97.7 35.4 -97.3 35.8 --project-dir ./hydro_project
+    ```
 
 Available commands:
 
-1. `generate`: Generate data for a single region
-   - Options:
-     - `--region`: Region to generate data for (default: oklahoma_city)
+1.  `generate`: Generate data for a single region.
+2.  `batch`: Generate data for multiple regions in batches.
+3.  `hydrologic-analysis`: Perform a full hydrologic analysis workflow.
 
-2. `batch`: Run batch processing for multiple regions
-   - Options:
-     - `--batch-size`: Number of regions to process in each batch (default: 20)
-     - `--wait-minutes`: Wait time between batches in minutes (default: 30)
-     - `--data-types`: Types of data to generate (can be specified multiple times)
-       - Available types: pois, routes, polygons
+This tool downloads a Digital Elevation Model (DEM) for a specified bounding box, performs hydrologic corrections (sink filling, flat resolution), calculates flow direction and accumulation, delineates a stream network, and identifies sub-catchments based on pour points (stream junctions and outlets).
+
+**Example:**
+
+```bash
+gis-generator hydrologic-analysis --bbox -97.7 35.4 -97.3 35.8 --project-dir ./hydro_project --resolution 10 --threshold 5000
+```
+
+-   `--bbox`: Defines the area of interest as `min_longitude min_latitude max_longitude max_latitude`.
+-   `--project-dir`: Specifies the folder where all outputs (DEMs, stream networks, catchments) will be saved.
+-   `--resolution`: Sets the DEM resolution in meters (e.g., 10 for 1/3 arc-second, ~10m).
+-   `--threshold`: The flow accumulation value used to define streams. Higher values result in a less dense stream network.
 
 ### Python Package Usage
 
@@ -192,13 +201,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - OpenStreetMap contributors
 - OSMnx library developers
 - GeoPandas community
-
-## Future Enhancements
-
-- Integration with [GIS Playground](https://github.com/raythurman/gis-playground)
-- Integration with scikit-learn for spatial analysis
-- Additional data types and attributes
-- Support for international cities
-- Advanced routing algorithms
-- Spatial pattern analysis
-- Machine learning integration for pattern generation
